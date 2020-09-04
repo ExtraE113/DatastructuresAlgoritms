@@ -1,4 +1,5 @@
 class IntNode(var data: Int) {
+    var visited: Int = 0;
     var next: IntNode? = null
 
     fun countNodesAfter(): Int {
@@ -15,6 +16,7 @@ class IntNode(var data: Int) {
         toInsert.next = next
         next = toInsert
     }
+
     
 //    fun insertLast(toInsert: IntNode) {
 //        var working = this.next
