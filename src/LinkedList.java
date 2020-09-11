@@ -1,9 +1,41 @@
-public class LinkedList<T> {
+public class LinkedList<T> implements Stack<T>, Queue<T>{
     static int count = 0;
     private Node<T> head;
 
     public LinkedList() {
         head = null;
+    }
+
+
+    @Override
+    public void push(T data) {
+        insertFirst(data);
+    }
+
+    @Override
+    public T pop() {
+        return removeFirst();
+    }
+
+    @Override
+    public T peek() {
+        return head.getData();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return head==null;
+    }
+
+
+    @Override
+    public void enqueue(T data) {
+        insertLast(data);
+    }
+
+    @Override
+    public T dequeue() {
+        return pop();
     }
 
     // Returns the total number of nodes in the Linked List
@@ -384,6 +416,47 @@ public class LinkedList<T> {
         System.out.println(doubleList.search(2.)); //true
         System.out.println(doubleList.removeFirst()); //123456789.987654321
         System.out.println(doubleList); // 3.05 -> 2.0 -> null
+
+
+        System.out.println();
+
+        //stack tests
+        System.out.println("Stack tests");
+        Stack<Integer> stack = new LinkedList<>();
+        stack.push(10);
+        stack.push(5);
+        stack.push(2);
+        stack.push(7);
+
+        System.out.println(stack.peek()); // 7
+
+        while (!stack.isEmpty()) {
+            System.out.println(stack.pop());
+        }
+        // 7
+        // 2
+        // 5
+        // 10
+
+
+        //queue tests
+        System.out.println();
+        System.out.println("Queue tests");
+        Queue<Integer> queue = new LinkedList<>();
+        queue.enqueue(10);
+        queue.enqueue(5);
+        queue.enqueue(2);
+        queue.enqueue(7);
+
+        System.out.println(queue.peek()); // 10
+
+        while (!queue.isEmpty()) {
+            System.out.println(queue.dequeue());
+        }
+        // 10
+        // 5
+        // 2
+        // 7
     }
 }
 
