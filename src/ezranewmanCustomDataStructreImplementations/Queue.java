@@ -1,3 +1,5 @@
+package ezranewmanCustomDataStructreImplementations;
+
 public interface Queue<T> {
     // Enqueues a value to the end of the queue
     public void enqueue(T data);

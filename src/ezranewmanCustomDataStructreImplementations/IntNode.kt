@@ -1,3 +1,5 @@
+package ezranewmanCustomDataStructreImplementations
+
 class IntNode(var data: Int) {
     var visited: Int = 0;
     var next: IntNode? = null
@@ -18,7 +20,7 @@ class IntNode(var data: Int) {
     }
 
     
-//    fun insertLast(toInsert: IntNode) {
+//    fun insertLast(toInsert: ezranewmanCustomDataStructreImplementations.IntNode) {
 //        var working = this.next
 //        while (working?.next != null) {
 //            working = working.next!!
@@ -28,7 +30,7 @@ class IntNode(var data: Int) {
 //    }
 
     override fun toString(): String {
-        return "IntNode(data=$data, next=$next)"
+        return "ezranewmanCustomDataStructreImplementations.IntNode(data=$data, next=$next)"
     }
 
 }
