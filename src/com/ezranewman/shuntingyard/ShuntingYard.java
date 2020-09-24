@@ -1,3 +1,7 @@
+package com.ezranewman.shuntingyard;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Deque;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -7,8 +11,7 @@ public class ShuntingYard {
     // You can use isOperator to test if a String is an operator or not
     // e.g. isOperator("+") => true
     //      isOperator("5") => false
-    public static boolean isOperator(String op)
-    {
+    public static boolean isOperator(String op) {
         return op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("^");
     }
 
@@ -20,7 +23,7 @@ public class ShuntingYard {
         try {
             Integer.parseInt(str);
             return true;
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -36,14 +39,11 @@ public class ShuntingYard {
     public static int getPrecedence(String str) {
         if (str.equals("(")) {
             return 0;
-        }
-        else if (str.equals("+") || str.equals("-")) {
+        } else if (str.equals("+") || str.equals("-")) {
             return 1;
-        }
-        else if (str.equals("*") || str.equals("/")) {
+        } else if (str.equals("*") || str.equals("/")) {
             return 2;
-        }
-        else { // if (str.equals("^")) {
+        } else { // if (str.equals("^")) {
             return 3;
         }
     }
@@ -65,17 +65,17 @@ public class ShuntingYard {
         String[] arr = infix.split(" ");
 
         for (String s : arr) {
-            if(isNumeric(s)){
+            if (isNumeric(s)) {
                 outputQueue.offer(s);
-            } else if(isOperator(s)){
-                while (!operatorStack.isEmpty() && precedenceCompare(s, operatorStack.peek())){
+            } else if (isOperator(s)) {
+                while (!operatorStack.isEmpty() && precedenceCompare(s, operatorStack.peek())) {
                     outputQueue.offer(operatorStack.pop());
                 }
                 operatorStack.push(s);
-            } else if(s.equals("(")){
+            } else if (s.equals("(")) {
                 operatorStack.push(s);
-            } else if(s.equals(")")){
-                while (!operatorStack.isEmpty() && !operatorStack.peek().equals("(")){
+            } else if (s.equals(")")) {
+                while (!operatorStack.isEmpty() && !operatorStack.peek().equals("(")) {
                     outputQueue.offer(operatorStack.pop());
                 }
                 operatorStack.pop();
@@ -83,7 +83,7 @@ public class ShuntingYard {
 
 
         }
-        while (!operatorStack.isEmpty()){
+        while (!operatorStack.isEmpty()) {
             outputQueue.offer(operatorStack.pop());
         }
         return outputQueue;
@@ -91,11 +91,36 @@ public class ShuntingYard {
 
     // Takes in a queue of tokens in postfix format, and evaluates the math expression
     // Returns the integer answer
-    public static int evaluate(Queue<String> inputQueue)
-    {
-        // YOUR CODE HERE (TO BE WRITTEN LATER)
-        return -1;
-
+    public static int evaluate(Queue<String> inputQueue) {
+        Deque<BigDecimal> evalStack = new LinkedList();
+        for (String s : inputQueue) {
+            if (isNumeric(s)){
+                evalStack.push(new BigDecimal(s));
+            } else {
+                BigDecimal num2 = evalStack.pop();
+                BigDecimal num1 = evalStack.pop();
+                switch (s){
+                    case "+":
+                        evalStack.push(num1.add(num2));
+                        continue;
+                    case "-":
+                        evalStack.push(num1.subtract(num2));
+                        continue;
+                    case "*":
+                        evalStack.push(num1.multiply(num2));
+                        continue;
+                    case "/":
+                        evalStack.push(num1.divide(num2));
+                        continue;
+                    case "^":
+                        //fractional exponents are not supported
+                        evalStack.push(num1.pow(num2.intValue()));
+                        continue;
+                }
+            }
+        }
+        //fractional answers are not supported
+        return evalStack.pop().setScale(1, RoundingMode.HALF_UP).intValue();
     }
 
     public static void main(String[] args) {

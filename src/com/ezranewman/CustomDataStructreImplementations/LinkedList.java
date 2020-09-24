@@ -1,13 +1,43 @@
-package ezranewmanCustomDataStructreImplementations;/* TODO: It would be way cleaner to do this with generics and implement the collections interface,
-     but it was 10:30 when I started this and ain't nobody got time for that */
+package com.ezranewman.CustomDataStructreImplementations;
 
-
-public class IntLinkedList {
+public class LinkedList<T> implements Stack<T>, Queue<T>{
     static int count = 0;
-    private IntNode head;
+    private Node<T> head;
 
-    public IntLinkedList() {
+    public LinkedList() {
         head = null;
+    }
+
+
+    @Override
+    public void push(T data) {
+        insertFirst(data);
+    }
+
+    @Override
+    public T pop() {
+        return removeFirst();
+    }
+
+    @Override
+    public T peek() {
+        return head.getData();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return head==null;
+    }
+
+
+    @Override
+    public void enqueue(T data) {
+        insertLast(data);
+    }
+
+    @Override
+    public T dequeue() {
+        return pop();
     }
 
     // Returns the total number of nodes in the Linked List
@@ -17,7 +47,7 @@ public class IntLinkedList {
             return 0;
         } else {
             int count = 1;
-            IntNode current = head;
+            Node<T> current = head;
 
             // We loop through the whole linked list until we get to the end
             while (current.getNext() != null) {
@@ -30,19 +60,19 @@ public class IntLinkedList {
     }
 
     // Inserts a new node at the front of the ezranewmanCustomDataStructreImplementations.LinkedList (prepend)
-    public void insertFirst(int data) {
-        IntNode newNode = new IntNode(data);
+    public void insertFirst(T data) {
+        Node<T> newNode = new Node<>(data);
         newNode.setNext(head);
         head = newNode;
     }
 
     // Inserts a new node at the back of the ezranewmanCustomDataStructreImplementations.LinkedList (append)
-    public void insertLast(IntNode data) {
+    public void insertLast(Node<T> data) {
         if (head == null) {
             head = data;
 
         } else {
-            IntNode current = head;
+            Node<T> current = head;
 
             // We loop through the whole linked list until we get to the end
             while (current.getNext() != null) {
@@ -54,17 +84,17 @@ public class IntLinkedList {
     }
 
     // Inserts a new node at the back of the ezranewmanCustomDataStructreImplementations.LinkedList (append)
-    public void insertLast(int data) {
-        IntNode newNode = new IntNode(data);
+    public void insertLast(T data) {
+        Node<T> newNode = new Node<>(data);
         insertLast(newNode);
     }
 
     // Returns true if val is present in the list, and false otherwie
-    public boolean search(IntNode val) {
-        IntNode current = head;
+    public boolean search(Node<T> val) {
+        Node<T> current = head;
         // We loop through the whole linked list until we get to the end
         while (current != null) {
-            if (current.getData() == val.getData()) {
+            if (current.getData().equals(val.getData())) {
                 return true;
             }
             current = current.getNext();
@@ -73,34 +103,33 @@ public class IntLinkedList {
     }
 
     // Returns true if val is present in the list, and false otherwie
-    public boolean search(int val) {
-        IntNode valNode = new IntNode(val);
+    public boolean search(T val) {
+        Node<T> valNode = new Node<>(val);
         return search(valNode);
     }
 
     // Removes the first node from the ezranewmanCustomDataStructreImplementations.LinkedList, and returns its data value
-    public IntNode removeFirstAsNode() {
-        IntNode first = head;
+    public Node <T> removeFirstAsNode() {
+        Node<T> first = head;
         if (head == null) {
             return null;
         }
         head = head.getNext();
-        
         return first;
     }
 
     // Removes the first node from the ezranewmanCustomDataStructreImplementations.LinkedList, and returns its data value
-    public int removeFirst() {
-        IntNode out = removeFirstAsNode();
+    public T removeFirst() {
+        Node<T> out = removeFirstAsNode();
         if (out == null) {
-            return -1;
+            return null;
         }
         return out.getData();
     }
 
     // Removes the last node from the ezranewmanCustomDataStructreImplementations.LinkedList, and returns its data value
-    public IntNode removeLastAsNode() {
-        IntNode current = head;
+    public Node<T> removeLastAsNode() {
+        Node<T> current = head;
 
         if (current == null) {
             return null;
@@ -115,38 +144,37 @@ public class IntLinkedList {
         while (current.getNext().getNext() != null) {
             current = current.getNext();
         }
-        IntNode out = current;
+        Node<T> out = current.getNext();
         current.setNext(null);
         return out;
     }
 
-    public int removeLast() {
-        IntNode last = removeLastAsNode();
+    public T removeLast() {
+        Node<T> last = removeLastAsNode();
         if (last == null) {
-            return -1;
+            return null;
         }
         return last.getData();
     }
 
 
-    public void removeAll(IntNode val) {
-        IntNode current = head;
+    public void removeAll(Node<T> val) {
+        Node<T> current = head;
 
-        if (current == null) {
-            return;
-        } else {
-            while (current.getData() == val.getData()){
+        if (current != null) {
+            while (current.getData().equals(val.getData())) {
                 head = current.getNext();
                 current = head;
-                if(current == null){
+                if (current == null) {
                     return;
                 }
             }
 
-            IntNode previous = null;
+            Node<T> previous = null;
             // We loop through the whole linked list until we get to the end
             while (current != null) {
                 if (current.getData() == val.getData()) {
+                    assert previous != null;
                     previous.setNext(current.getNext());
                 }
                 previous = current;
@@ -155,19 +183,19 @@ public class IntLinkedList {
         }
     }
 
-    public void removeAll(int val) {
-        IntNode valNode = new IntNode(val);
+    public void removeAll(T val) {
+        Node<T> valNode = new Node<>(val);
         removeAll(valNode);
     }
 
     public void reverse() {
-        IntNode current = head;
-        if(current == null){
+        Node<T> current = head;
+        if (current == null) {
             return;
         }
-        IntNode previous = null;
-        IntNode next = current.getNext();
-        while (current.getNext() != null){
+        Node<T> previous = null;
+        Node<T> next = current.getNext();
+        while (current.getNext() != null) {
             current.setNext(previous);
             previous = current;
             current = next;
@@ -178,14 +206,14 @@ public class IntLinkedList {
     }
 
 
-    public boolean hasCycle(){
+    public boolean hasCycle() {
         count++;
-        IntNode current = head;
-        if(current == null){
+        Node<T> current = head;
+        if (current == null) {
             return false;
         }
-        while (current.getNext() != null){
-            if(current.getVisited() == count){
+        while (current.getNext() != null) {
+            if (current.getVisited() == count) {
                 return true;
             }
             current.setVisited(count);
@@ -196,21 +224,21 @@ public class IntLinkedList {
 
     // toString function that is called when ezranewmanCustomDataStructreImplementations.LinkedList is printed
     public String toString() {
-        String str = "";
-        IntNode current = head;
+        StringBuilder str = new StringBuilder();
+        Node<T> current = head;
         while (current != null) {
-            str = str + current.getData() + " -> ";
+            str.append(current.getData()).append(" -> ");
             current = current.getNext();
         }
-        str += "null";
-        return str;
+        str.append("null");
+        return str.toString();
     }
 
     public static void main(String[] args) {
         // Test 1: insertFirst method
         // We are going to make a list containing 4 -> 2 -> 3 -> null
         System.out.println("Test 1:");
-        IntLinkedList list1 = new IntLinkedList();
+        LinkedList<Integer> list1 = new LinkedList<>();
         list1.insertFirst(3);
         list1.insertFirst(2);
         list1.insertFirst(4);
@@ -219,7 +247,7 @@ public class IntLinkedList {
         // Test 2: insertLast method
         // We are going to make a list containing 7 -> 2 -> 5 -> 10 -> null
         System.out.println("\nTest 2:");
-        IntLinkedList list2 = new IntLinkedList();
+        LinkedList<Integer> list2 = new LinkedList<>();
         list2.insertLast(7);
         list2.insertLast(2);
         list2.insertLast(5);
@@ -259,7 +287,7 @@ public class IntLinkedList {
         // Test 6: removeAll method
         System.out.println();
         System.out.println("Test 6:");
-        IntLinkedList list3 = new IntLinkedList();
+        LinkedList<Integer> list3 = new LinkedList<>();
         list3.insertFirst(3);
         list3.insertFirst(4);
         list3.insertFirst(5);
@@ -268,7 +296,7 @@ public class IntLinkedList {
         list3.removeAll(2);
         System.out.println(list3);
 
-        list3 = new IntLinkedList();
+        list3 = new LinkedList<>();
         list3.insertFirst(2);
         list3.insertFirst(2);
         list3.insertFirst(2);
@@ -277,7 +305,7 @@ public class IntLinkedList {
         list3.removeAll(2);
         System.out.println(list3); // null
 
-        list3 = new IntLinkedList();
+        list3 = new LinkedList<>();
         list3.insertFirst(3);
         list3.insertFirst(4);
         list3.insertFirst(5);
@@ -290,7 +318,7 @@ public class IntLinkedList {
 
         // Test 6b: removeAll method
         System.out.println("\nTest 6b:");
-        IntLinkedList list4 = new IntLinkedList();
+        LinkedList<Integer> list4 = new LinkedList<>();
         list4.insertLast(1);
         list4.insertLast(2);
         list4.insertLast(6);
@@ -302,7 +330,7 @@ public class IntLinkedList {
         list4.removeAll(6);
         System.out.println(list4); // 1 -> 2 -> 3 -> 4 -> 5 -> null
 
-        list4 = new IntLinkedList();
+        list4 = new LinkedList<>();
         list4.insertLast(6);
         list4.insertLast(5);
         list4.insertLast(3);
@@ -314,7 +342,7 @@ public class IntLinkedList {
         list4.removeAll(6);
         System.out.println(list4); // 5 -> 3 -> 1 -> 2 -> 0 -> null
 
-        list4 = new IntLinkedList();
+        list4 = new LinkedList<>();
         list4.insertLast(6);
         list4.insertLast(6);
         list4.insertLast(6);
@@ -329,10 +357,9 @@ public class IntLinkedList {
         System.out.println(list3); // 3 -> 4 -> 5 -> 6 -> 7 -> null
 
 
-
 // Test 7: reverse
         System.out.println("\nTest 7b:");
-        IntLinkedList list5 = new IntLinkedList();
+        LinkedList<Integer> list5 = new LinkedList<>();
         list5.insertLast(3);
         list5.insertLast(2);
         list5.insertLast(4);
@@ -341,14 +368,14 @@ public class IntLinkedList {
 
 // Test8: hasCycle
         System.out.println("\nTest 8:");
-        IntLinkedList list6 = new IntLinkedList();
+        LinkedList<Integer> list6 = new LinkedList<>();
         list6.insertLast(3);
         list6.insertLast(2);
         list6.insertLast(4);
         list6.head.getNext().getNext().setNext(list6.head);
         System.out.println(list6.hasCycle()); // true
 
-        list6 = new IntLinkedList();
+        list6 = new LinkedList<>();
         list6.insertLast(3);
         list6.insertLast(2);
         list6.insertLast(4);
@@ -356,12 +383,82 @@ public class IntLinkedList {
         list6.head.getNext().getNext().getNext().setNext(list6.head.getNext());
         System.out.println(list6.hasCycle()); // true
 
-        list6 = new IntLinkedList();
+        list6 = new LinkedList<>();
         list6.insertLast(3);
         list6.insertLast(2);
         list6.insertLast(4);
         list6.insertLast(5);
         System.out.println(list6.hasCycle()); // false
+        System.out.println();
+
+
+        // Generic Classes Test
+        System.out.println("Generic classes test");
+        LinkedList<String> stringList = new LinkedList<>();
+        stringList.insertFirst("Apple");
+        stringList.insertFirst("Orange");
+        stringList.insertLast("Banana");
+        System.out.println(stringList); // "Orange" -> "Apple" -> "Banana" -> null
+
+        System.out.println(stringList.search("Apple")); // true
+        System.out.println(stringList.search("Pineapple")); // false
+
+        System.out.println(stringList.removeFirst()); // "Orange"
+        System.out.println(stringList.removeLast()); // "Banana"
+        System.out.println(stringList); // "Apple" -> null
+        System.out.println();
+
+        //doubles
+        System.out.println("Doubles test");
+
+        LinkedList<Double> doubleList = new LinkedList<>();
+        doubleList.insertFirst(2.);
+        doubleList.insertFirst(3.05);
+        doubleList.insertFirst(123456789.987654321);
+        System.out.println(doubleList.search(2.)); //true
+        System.out.println(doubleList.removeFirst()); //123456789.987654321
+        System.out.println(doubleList); // 3.05 -> 2.0 -> null
+
+
+        System.out.println();
+
+        //stack tests
+        System.out.println("ezranewmanCustomDataStructreImplementations.Stack tests");
+        Stack<Integer> stack = new LinkedList<>();
+        stack.push(10);
+        stack.push(5);
+        stack.push(2);
+        stack.push(7);
+
+        System.out.println(stack.peek()); // 7
+
+        while (!stack.isEmpty()) {
+            System.out.println(stack.pop());
+        }
+        // 7
+        // 2
+        // 5
+        // 10
+
+
+        //queue tests
+        System.out.println();
+        System.out.println("ezranewmanCustomDataStructreImplementations.Queue tests");
+        Queue<Integer> queue = new LinkedList<>();
+        queue.enqueue(10);
+        queue.enqueue(5);
+        queue.enqueue(2);
+        queue.enqueue(7);
+
+        System.out.println(queue.peek()); // 10
+
+        while (!queue.isEmpty()) {
+            System.out.println(queue.dequeue());
+        }
+        // 10
+        // 5
+        // 2
+        // 7
     }
 }
 

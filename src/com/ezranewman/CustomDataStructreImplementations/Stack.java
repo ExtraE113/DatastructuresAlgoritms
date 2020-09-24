@@ -1,4 +1,4 @@
-package ezranewmanCustomDataStructreImplementations;
+package com.ezranewman.CustomDataStructreImplementations;
 
 public interface Stack<T> {
     // Pushes some data value to the top of the ezranewmanCustomDataStructreImplementations.Stack

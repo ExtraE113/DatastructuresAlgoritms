@@ -1,3 +1,5 @@
+package com.ezranewman.CustomDataStructreImplementations;
+
 import java.util.Arrays;
 
 public class IntArrayStack implements Stack<Integer>{
@@ -44,7 +46,7 @@ public class IntArrayStack implements Stack<Integer>{
 
     @Override
     public String toString() {
-        return "IntArrayStack{" +
+        return "ezranewmanCustomDataStructreImplementations.IntArrayStack{" +
                 "arr=" + Arrays.toString(arr) +
                 ", lastUsed=" + lastUsed +
                 '}';

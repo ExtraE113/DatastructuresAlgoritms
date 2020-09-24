@@ -1,3 +1,5 @@
+package com.ezranewman.CustomDataStructreImplementations;
+
 public class IntArrayQueue implements Queue<Integer>{
 
     private int[] arr;

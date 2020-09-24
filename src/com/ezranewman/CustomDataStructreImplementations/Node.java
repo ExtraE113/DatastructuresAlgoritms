@@ -1,4 +1,4 @@
-package ezranewmanCustomDataStructreImplementations;
+package com.ezranewman.CustomDataStructreImplementations;
 
 public class Node<T> {
     private T data;

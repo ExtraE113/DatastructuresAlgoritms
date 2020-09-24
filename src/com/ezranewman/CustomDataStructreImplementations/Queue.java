@@ -1,4 +1,4 @@
-package ezranewmanCustomDataStructreImplementations;
+package com.ezranewman.CustomDataStructreImplementations;
 
 public interface Queue<T> {
     // Enqueues a value to the end of the queue

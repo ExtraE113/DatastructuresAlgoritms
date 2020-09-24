@@ -1,4 +1,4 @@
-package ezranewmanCustomDataStructreImplementations
+package com.ezranewman.CustomDataStructreImplementations
 
 class IntNode(var data: Int) {
     var visited: Int = 0;
