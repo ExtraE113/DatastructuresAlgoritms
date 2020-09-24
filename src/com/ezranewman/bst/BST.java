@@ -79,27 +79,59 @@ public class BST {
     }
 
     // Deletes val from the BST
+    // This is a wrapper function that just calls deleteRec
     public void delete(int val) {
-        Node working = root;
-        if (working == null) {
-            return;
+        root = deleteRec(root, val);
+    }
+
+    // Deletes val from the BST
+    private static Node deleteRec(Node current, int val)
+    {
+        // Base Case: if tree is empty, return null
+        if (current == null) {
+            return null;
         }
-        while (true) {
-            if (working.data == val) {
-                return;
-            } else if (working.data > val) {
-                if (working.left != null && working.left.data == val) {
-                    working.left = working.left.left;
-                    return;
-                }
-                working = working.left;
+
+        // If val < current.data, recur down left subtree
+        if (val < current.data) {
+            current.left = deleteRec(current.left, val);
+            return current;
+        }
+        // If val > current.data recur down right subtree
+        else if (val > current.data) {
+            current.right = deleteRec(current.right, val);
+            return current;
+        }
+        // If val is same as current's data, then this is
+        // the node to be deleted
+        else
+        {
+            if(current.right == null && current.left == null){
+                return  null;
+            } else if (current.left == null) {
+                return current.right;
+            } else if(current.right == null) {
+                return current.left;
             } else {
-                if (working.right != null && working.right.data == val) {
-                    working.right = working.right.right;
-                    return;
-                }
-                working = working.right;
+                current.data = minValue(current.right);
+                current.right = deleteRec(current.right, current.data);
+                return current;
             }
+        }
+
+        // We should never reach this line of code,
+        // feel free to delete this return statement
+        //return current;
+
+    }
+
+    // Returns the smallest value in the subtree
+    // where current is the root
+    private static int minValue(Node current) {
+        if(current.left == null){
+            return current.data;
+        } else {
+            return minValue(current.left);
         }
     }
 
@@ -293,15 +325,27 @@ public class BST {
         //     / \
         //     6 9
 
-        integerBST.delete(6);
+        integerBST.delete(7);
         BTreePrinter.printNode(integerBST.root);
         //
         //    4
         //   / \
         //  /   \
-        //  3   7
-        //       \
-        //       9
+        //  3   9
+        //     /
+        //     6
+
+        System.out.println();
+        integerBST.insert(8);
+        integerBST.insert(7);
+        integerBST.insert(15);
+        integerBST.insert(16);
+        integerBST.insert(14);
+
+        BTreePrinter.printNode(integerBST.root);
+        integerBST.delete(9);
+        BTreePrinter.printNode(integerBST.root);
+
 
     }
 
