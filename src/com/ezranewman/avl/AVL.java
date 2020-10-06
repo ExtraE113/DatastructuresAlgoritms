@@ -82,8 +82,15 @@ public class AVL {
     //        / \
     //      Cl  Cr
     public Node RR_Rotate(Node A) {
-        // YOUR CODE HERE
-        return null;
+        Node B = A.right;
+        Node Bl = B.left;
+        B.left = A;
+        A.right = Bl;
+
+        A.height = Math.max(height(A.right), height(A.left)) + 1;
+        B.height = Math.max(height(B.right), height(B.left)) + 1;
+
+        return B;
     }
 
     //    A                           C
@@ -95,8 +102,23 @@ public class AVL {
     // Cl   Cr
 
     public Node RL_Rotate(Node A) {
-        // YOUR CODE HERE
-        return null;
+        Node Ar = A.right;
+        Node B = A.right;
+        Node Bl = B.left;
+        Node C = B.left;
+        Node Cl = C.left;
+        Node Cr = C.right;
+
+        C.left = A;
+        C.right = B;
+        B.left = Cr;
+        A.right = Cl;
+
+        A.height = Math.max(height(A.right), height(A.left)) + 1;
+        B.height = Math.max(height(B.right), height(B.left)) + 1;
+        C.height = Math.max(height(C.right), height(C.left)) + 1;
+
+        return C;
     }
 
     public void insert(int data) {
@@ -112,8 +134,7 @@ public class AVL {
             return current;
         } else if (data < current.data) {
             current.left = insertRec(current.left, data);
-        } else // if (data > current.data)
-        {
+        } else /* if (data > current.data) */ {
             current.right = insertRec(current.right, data);
         }
 
@@ -139,7 +160,16 @@ public class AVL {
         }
         // 5) Next check if RR or RL case
         else if (bf < -1) {
-            // YOUR CODE HERE
+            // RR: If inserted value is more than current.right.data,
+            // then must be right right case
+            if (data > current.right.data) {
+                return RR_Rotate(current);
+            }
+            // RL: If inserted value is less than current.right.data,
+            // then must be right left case
+            else if (data < current.right.data) {
+                return RL_Rotate(current);
+            }
         }
 
         // If balanced, return the original node
@@ -426,7 +456,7 @@ public class AVL {
         //  /   \
         //  4   8
         // / \ / \
-        // 3 5 7 9
+        // 1 5 7 9
 
         // RL rotation
         System.out.println("Test 2.5: ");
@@ -486,6 +516,27 @@ public class AVL {
         //  6
         // / \
         // 4 8
+        // Insert, RR-rotation test
+        System.out.println("Test 3.5: ");
+        AVL AVL35 = new AVL();
+        AVL35.insert(8);
+        AVL35.insert(9);
+        AVL35.insert(10);
+        BTreePrinter.printNode(AVL35.root);
+        //  9
+        // / \
+        // 8 10
+
+        // Insertion, RL-rotation test
+        System.out.println("Test 4.5: ");
+        AVL AVL45 = new AVL();
+        AVL45.insert(9);
+        AVL45.insert(11);
+        AVL45.insert(10);
+        BTreePrinter.printNode(AVL45.root);
+        //  10
+        // / \
+        // 9 11
 
 //        // **************
 //        // Deletion Tests
