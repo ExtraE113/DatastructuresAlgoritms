@@ -186,7 +186,7 @@ public class AVL {
 		// Base case: current is null (the tree did not contain the node
 		// we wanted to delete
 		if (current == null) {
-			return current;
+			return null;
 		}
 
 		// Recursive cases: we haven't found the node to delete yet,
@@ -235,7 +235,24 @@ public class AVL {
 
 		// If unbalanced, perform necessary rotations
 
-		// YOUR CODE HERE
+		//LL or LR
+		if(bf == 2){
+			if(getBalance(current.left) == 1){
+				System.out.println("LL ROTATE" + current.data);
+				return LL_Rotate(current);
+			} else {
+				System.out.println("LR ROTATE" + current.data);
+				return LR_Rotate(current);
+			}
+		} else if(bf == -2){ //
+			if(getBalance(current.right) == 1){
+				System.out.println("RL ROTATE" + current.data);
+				return RL_Rotate(current);
+			} else {
+				System.out.println("RR ROTATE" + current.data);
+				return RR_Rotate(current);
+			}
+		}
 
 
 		// If balanced, return the original node
