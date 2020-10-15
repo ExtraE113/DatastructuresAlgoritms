@@ -1,4 +1,4 @@
-package com.ezranewman.bst;
+package com.ezranewman.CustomDataStructreImplementations.bst;
 
 import java.util.ArrayList;
 import java.util.Collections;
