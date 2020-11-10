@@ -64,7 +64,14 @@ public class Trie {
 	// Autocompletes based on the words in the Trie;
 	// prints out all words that start with str
 	public void autoComplete(String str) {
-		return;
+		//get to the current string
+		TrieNode working = root;
+		for(char c: str.toCharArray()){
+			working = working.children[c-'a'];
+		}
+
+		//we already have code that prints out everything south of a current node. Let's use it!
+		printRec(working, str);
 	}
 
 	public static void main(String[] args) {
