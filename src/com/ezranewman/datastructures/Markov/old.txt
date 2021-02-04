@@ -1,0 +1,262 @@
+package com.ezranewman.datastructures.Markov;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+
+public class MarkovTextGenerator {
+	HashMap<String, LinkedList<String>> table;
+	HashMap<String, LinkedList<String>> table2;
+	int count = 0;
+	List<String> starts;
+	boolean useEnds;
+	boolean csv;
+	boolean fusions;
+
+	public MarkovTextGenerator() {
+		table = new HashMap<>();
+		table2 = new HashMap<>();
+		starts = new ArrayList<>();
+		useEnds = false;
+		csv = false;
+		fusions = false;
+	}
+
+	public MarkovTextGenerator(boolean useEnds, boolean csv, boolean fusions) {
+		table = new HashMap<>();
+		table2 = new HashMap<>();
+		starts = new ArrayList<>();
+		this.useEnds = useEnds;
+		this.csv = csv;
+		this.fusions = fusions;
+	}
+
+	// Trains the Markov Text Generator
+	// Given the filename for the file that the training will be based on
+	public void train(String filename) {
+		try {
+			File dict = new File("src/com/ezranewman/Markov/" + filename);
+			Scanner scanner = new Scanner(dict);
+			HashMap<String, LinkedList<String>> trainingTable = table;
+			//fusions only work with csv
+			if (fusions) {
+				if (count % 2 != 0) {
+					trainingTable = table2;
+				}
+			}
+
+			if (!csv) {
+				//this code needs to be refactored but whatever
+				// (nothing more permanent then a temp solution
+				String cur = scanner.next();
+				String first = cur;
+				starts.add(cur);
+				String next = scanner.next();
+
+				while (scanner.hasNext()) {
+					LinkedList<String> options;
+					if (table.containsKey(cur)) {
+						options = table.get(cur);
+					} else {
+						options = new LinkedList<String>();
+						table.put(cur, options);
+					}
+					options.add(next);
+					cur = next;
+					next = scanner.next();
+				}
+				// do it once more for the final pair
+				LinkedList<String> options;
+				if (table.containsKey(cur)) {
+					options = table.get(cur);
+
+				} else {
+					options = new LinkedList<String>();
+					table.put(cur, options);
+				}
+				options.add(next);
+				cur = next;
+
+				// and loop in a circle
+				if (table.containsKey(cur)) {
+					options = table.get(cur);
+				} else {
+					options = new LinkedList<String>();
+					table.put(cur, options);
+				}
+				if (useEnds) {
+					options.add(null);
+				} else {
+					options.add(first);
+				}
+			} else {
+				while (scanner.hasNext()) {
+					String[] line = scanner.nextLine().split(" ");
+					starts.add(line[0]);
+					for (int i = 0; i < line.length; i++) {
+						LinkedList<String> options;
+						if (trainingTable.containsKey(line[i])) {
+							options = trainingTable.get(line[i]);
+						} else {
+							options = new LinkedList<>();
+							trainingTable.put(line[i], options);
+						}
+
+						try {
+							options.add(line[i + 1]);
+						} catch (ArrayIndexOutOfBoundsException e) {
+							//last element
+							if (useEnds) {
+								options.add(null);
+							} else {
+								options.add(line[0]);
+							}
+						}
+					}
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			System.err.println("Well, that can't be good ¯\\_(ツ)_/¯"); //It's important that your chain has some personality.
+			e.printStackTrace();
+		}
+	}
+
+	// Generates text based on the training
+	// Given the number of words to generate
+	public String generateText(int numWords) {
+		Random r = new Random();
+		// we've kept track of what elements commonly start our linked lists so we can pick one of those
+		// using a linked list instead of a string makes it easier to expand to train from multiple files
+		StringBuilder out = new StringBuilder(starts.get(r.nextInt(starts.size())));
+		String current = out.toString();
+		for (int i = 0; i < numWords; i++) {
+			List<String> currentRow;
+			currentRow = table.get(current);
+			if (currentRow == null) {
+				currentRow = table2.get(current);
+			}
+			if (fusions && (i / 2) % 2 == 1) { //if fusions, alternate every 2 words (ish, this just causes it to try to mix them up a little more if there's not a lot of crossover between the datasets's vocab)
+				currentRow = table2.get(current);
+				if (currentRow == null) {
+					currentRow = table.get(current);
+				}
+			}
+			current = currentRow.get(r.nextInt(currentRow.size()));
+			if (useEnds && current == null) {
+				return out.toString();
+			}
+			out.append(" ").append(current);
+		}
+		return out.toString();
+	}
+
+	// Prints out the table, nicely
+	@Override
+	public String toString() {
+		StringBuilder strBuilder = new StringBuilder();
+
+		for (String key : table.keySet()) {
+			strBuilder.append(key).append(": ");
+
+			LinkedList<String> list = table.get(key);
+
+			for (String word : list) {
+				strBuilder.append(word).append(" ");
+			}
+
+			strBuilder.append("\n");
+		}
+
+		return strBuilder.toString();
+	}
+
+	// Retrains the MTG (this will delete the existing data
+	// before training it with new data)
+	public void retrain(String filename) throws FileNotFoundException {
+		table.clear();
+		table2.clear();
+		starts = new ArrayList<>();
+		train(filename);
+	}
+
+	public static void com.ezranewman.algorithms.graphs.main(String[] args) throws FileNotFoundException {
+		// Test 1: Train Method
+		System.out.println("Test 1:");
+		MarkovTextGenerator gen = new MarkovTextGenerator();
+		gen.train("texts/sample.txt");
+		System.out.println(gen);
+		// a: bar pie
+		// Here: is is
+		// bar: chart
+		// of: my my
+		// is: a a
+		// my: favorite favorite
+		// pies.: Here
+		// bars.: Here
+		// chart: of of
+		// favorite: pies. bars.
+		// pie: chart
+
+		// Test 2: Generate Method (note that your response won't match exactly)
+		System.out.println("Test 2:");
+		System.out.println(gen.generateText(100));
+		// Here is a bar chart of my favorite pies. Here is a pie chart
+		// of my favorite pies. Here is a bar chart of my favorite
+		// bars. Here is a pie chart of my favorite bars. Here is a
+		// bar chart of my favorite pies. Here is a bar chart of my
+		// favorite bars. Here is a pie chart of my favorite bars.
+		// Here is a pie chart of my favorite pies. Here is a bar
+		// chart of my favorite pies. Here is a bar chart of my
+		// favorite pies. Here is a bar chart of my favorite bars.
+
+		// Test 3: Test out your code!
+		System.out.println("\nTest 3:");
+		gen.retrain("texts/DrSeuss.txt");
+		System.out.println(gen.generateText(1000));
+
+
+		// Test 4: news articles
+		System.out.println();
+		System.out.println("Test 4");
+		gen = new MarkovTextGenerator(true, true, true);
+		gen.train("texts/abcnews-date-text.csv");
+		gen.train("texts/xhamster-DATASET.csv");
+
+		for (int i = 0; i < 20; i++) {
+			System.out.println(gen.generateText(100));
+		}
+
+		//test 5 pr0n
+		System.out.println();
+		System.out.println("test 5");
+		gen = new MarkovTextGenerator(true, true, false);
+		gen.retrain("texts/xhamster-DATASET.csv");
+
+		for (int i = 0; i < 20; i++) {
+			System.out.println(gen.generateText(100));
+		}
+
+		//test 6 trump
+		System.out.println();
+		System.out.println("test 5");
+		gen = new MarkovTextGenerator(true, true, false);
+		gen.retrain("texts/trumptweets.csv");
+
+		for (int i = 0; i < 20; i++) {
+			System.out.println(gen.generateText(100));
+		}
+
+		//test 7 trump x pr0n
+		System.out.println();
+		System.out.println("test 7");
+		gen = new MarkovTextGenerator(true, true, true);
+		gen.retrain("texts/trumptweets.csv");
+		gen.train("texts/xhamster-DATASET.csv");
+
+		for (int i = 0; i < 50; i++) {
+			System.out.println(gen.generateText(100));
+		}
+	}
+
+}
